@@ -1,3 +1,9 @@
+/** 
+ * CORRECCION:
+ *  esto no se hace. El objetivo de esto es que no se ejecute el js hasta que el DOM haya cargado, como en nuestro
+ *  html estamos cargando el js justo antes del cierre del body el DOM ya esta cargado, asi que esto no es necesario.
+ *  Recuerda seguir el orden correcto: elementos del DOM > variables > eventos > funciones
+*/
 document.addEventListener("DOMContentLoaded", () => {
   console.log("El script está conectado");
 
@@ -22,6 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarPregunta();
   });
 
+  /**
+   * CORRECCION:
+   *  No se puede llamar a la api para cada pregunta. Las consultas a la API conllevan un tiempo de espera, y además 
+   *  muchas APIS son de pago, por lo que nos interesará hacer el menos número de llamadas posibles. En este caso haremos
+   *  una llamada, guardaremos su respuesta en un array de objetos del tipo que tengan las preguntas y gestionaremos desde
+   *  ahí como se van mostrando las preguntas.
+   * Las api_url no se almacenan enteras, se almacena la base y el resto se construye segun el endpoint que necesites:
+   *  API_URL_BASE = "https://opentdb.com/api.php?"
+   *  const cantidad = 10; const tipo = "multiple";
+   *  const apiUrl = `${API_URL_BASE}amount=${cantidad}&type=${tipo}`;
+   */
   // Función para cargar una pregunta desde la API
   function cargarPregunta() {
     fetch("https://opentdb.com/api.php?amount=1&type=multiple")
@@ -37,7 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const questionText = pregunta.question;
         const correctAnswer = pregunta.correct_answer;
         const incorrectAnswers = pregunta.incorrect_answers;
-
+        /**
+         * CORRECCION: correctAnswer te sobra, asigna a respuestaCorrecta directamente: respuestaCorrecta = pregunta.correct_answer;
+         */
         respuestaCorrecta = correctAnswer;
 
         const allAnswers = [...incorrectAnswers, correctAnswer];
@@ -62,6 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Desactivar todos los botones
             botones.forEach(b => b.disabled = true);
 
+            /**
+             * CORRECCION: los console.log están muy bien mientras desarrollamos, pero para entregar los eliminamos
+             * a no ser que sean necesarios.
+             */
             if (respuestaElegida === respuestaCorrecta) {
               console.log("✅ Respuesta correcta");
               aciertos++;
